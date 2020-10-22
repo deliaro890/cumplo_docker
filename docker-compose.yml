@@ -17,9 +17,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_USER=prueba
-      - POSTGRES_PASSWORD=prueba
-      - POSTGRES_DB=prueba_dev
+      - POSTGRES_USER=dynasty
+      - POSTGRES_PASSWORD=dynasty
+      - POSTGRES_DB=dynasty_dev
 
 volumes:
   postgres_data:
