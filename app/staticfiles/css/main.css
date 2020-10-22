@@ -1,0 +1,208 @@
+html, body {
+    background: #fafafa;
+    height: 100%;
+    width: 100%;
+    font-family: 'Roboto', sans-serif;
+}
+
+#auth-container {
+    background: #fff;
+    border: 1px solid #e6e6e6;
+    border-radius: 1px;
+}
+
+#main-navbar {
+    background: #fff;
+    border-bottom: 1px solid rgba(0,0,0,.0975);
+}
+
+.post-container {
+    background: #fff;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+}
+
+.nav-icon a {
+    color: #262626;
+    font-size: 1.3em;
+    display: block;
+    margin-top: .2em;
+    margin-left: 1.2em;
+    font-weight: 100;
+}
+.nav-icon a:hover {
+    color: #1d5e72;;
+}
+#profile-box {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,.0975);
+    border-radius: 1px;
+    margin-top: 6em;
+}
+
+#user-posts #post-thumb {
+    background: #fff;
+}
+
+.errors{
+    font-size: 12px;
+    color:red;
+}
+.fas .fa-bars{
+    display: block!important;
+}
+
+.box_movil{
+    min-width: fit-content;
+}
+
+#popUp{
+    display: none;
+    height: 100vh;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    transition: opacity 500ms;
+    z-index: 2;   
+}
+#confirmacion{
+    height: 300px;
+    width: 300px;
+    background-color: whitesmoke;
+    position:relative;
+    top: 200px;
+    left: 30%;
+
+    
+}
+
+.table_Dc{
+    width: 270px;
+}
+
+.table_ganancia{
+    width: 270px;
+    padding: 10px;
+    text-align: center
+}
+
+.item{
+    margin-top: 0px!important;
+    margin-left: auto;
+    margin-right: auto;   
+}
+.producto_detalle{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.tabla_center{
+    max-width: 270px;
+}
+.errores{
+    background-color: #FFFF00;
+}
+
+.error{
+    font-size: 12px;
+    color:red;
+}
+.form-sign_up{
+   margin-top: 100px;
+   margin-right: auto;
+   margin-left: auto;
+   width: 300px;
+}
+.logo{
+    width: 150px;
+    align-self: center;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px;
+}
+.img_logo{
+    width: 150px;
+}
+.nav_logo_img{
+    width: 50px;
+}
+.nav_logo{
+    width: 50px;
+    margin: 0px;
+}
+.title_signup{
+    margin-top: 100px;
+    margin-bottom: -60px!important;
+}
+.titles{
+    text-align: center;
+}
+
+.boton_mas{
+    margin-top: 30px;
+}
+.division{
+    border-top: .4px solid #d2bbbb;
+}
+.carrito{
+    padding: 20px;
+}
+
+.subtitle{
+    text-align: center;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.menu_title{
+    text-align: center;
+    font-style: italic;
+    font-size: 30px;
+}
+.div{
+    border-top: 2.4px solid #d2bbbb;
+}
+
+.edit_prod{
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.borrar_producto{
+    display: flex;
+}
+
+.col-8{
+    max-width: 90%;
+}
+.check_borrar_p{
+    width: 20px;
+    margin:revert;
+}
+
+@media (min-width: 760px) {
+    .menu{
+        width: 40%;
+        margin:auto;
+    }
+    .box_movil{
+        max-width: 300px;
+    }
+    .table_Dc{
+        width: 100%;
+    }
+
+    .table_ganancia{
+        width: 100%;  
+    }
+    .tabla_center{
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 700px;
+    }
+    .nav_logo{
+        width: 50px;
+        margin: 0px;
+    }
+}

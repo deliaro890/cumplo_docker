@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>pruebaCumplo</title>
+</head>
+<style>
+    
+    input{
+        margin:10px;
+    }
+    .udis_data{
+        display:none;
+        width: 300px;
+        margin: auto;
+        border: 2px dashed #4169E1;
+        text-align: center;
+        padding: 20px;
+        margin: 20px auto 40px auto;
+    }
+    .inputs{
+        width: 300px;
+        margin:40px auto 40px auto;
+        text-align: center;
+    }
+    .btn{
+        border: 2px solid gray;
+        background: #4169E1;
+        color: white;
+
+    }
+    .titulo{
+        padding: 30px;
+        text-align: center;
+        background-color: #4169E1;
+        color:white;
+        font-style: italic;
+    }
+    .mensaje{
+        font-size: 14px;
+        color:red;
+    }
+    .udis{
+        margin: 20px auto 40px auto;
+       
+        box-shadow: 3px 3px 5px 6px rgba(0,0,0,0.3);
+        padding: 10px;
+        height: auto;
+    }
+    .subtitle{
+        text-align: center;
+        font-weight: bolder;
+        font-size: 20px;
+    }
+    @media (min-width: 1100px) {
+        .udis{
+            width: 1000px;
+        }
+    }
+</style>
+<body>
+    <div class='titulo'><h1 class='title'>Valores de UDIs y Dólares</h1></div>
+    {% csrf_token %}
+    <input value='{{csrf_token}}' id='csrf' style='display:none'/>
+    <div class='inputs'>
+        <p>Elija un rango de fechas</p>
+        <p id='mensaje' class='mensaje'></p>
+        <input type=date id='fecha_inicial'><br>
+        <input type=date id='fecha_final'><br>
+        <input type='button' class="btn" id='btn' onclick="validar_fechas()" value='Establecer'>
+
+    </div>
+
+    <div class='udis'>
+        <p class='subtitle'>UDIs</p>
+        
+        <div id='list_udis' class='udis_data'><p>Fecha --> valor</p><hr></div>
+        <div id='udis_min_max_av' class='udis_data'></div>
+        <div id="container"></div>
+    </div>
+
+    <div class='udis'>
+        <p class='subtitle'>Dólares</p>
+        
+        <div id='list_dolares' class='udis_data'><p>Fecha --> valor</p><hr></div>
+        <div id='dolares_min_max_av' class='udis_data'></div>
+        <div id="container_2"></div>
+    </div>
+    
+    
+   
+
+    
+
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/sankey.js"></script>
+<script src="https://code.highcharts.com/modules/organization.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<script>
+    var btn = document.getElementById('btn')
+    var mensaje = document.getElementById('mensaje')
+    
+
+    function validar_fechas(){
+        //debugger
+        var inicial = document.getElementById('fecha_inicial')
+        var final = document.getElementById('fecha_final')
+        if(inicial.value && final.value){
+            console.log(inicial.value,final.value)
+            mensaje.innerHTML=''
+            var fechas = {
+                'fecha_inicial':inicial.value,
+                'fecha_final':final.value
+            }
+            
+            send_data(fechas)
+    
+        }else{
+            warning = 'debe establecer las dos fechas'
+            mensaje.innerHTML=warning
+        }
+
+        
+    }
+    
+    var csrf = document.getElementById('csrf').value
+  
+    function send_data(fechas){
+    
+        //debugger
+        $.ajax({
+            url : 'http://localhost:8000/banxico/',  
+            method: 'POST',
+            data: JSON.stringify(fechas),
+            contentType: 'application/json; charset=utf-8',
+            headers:{'X-CSRFToken': csrf},
+            success: function (data) { 
+                console.log(data)
+                var fechas = []
+                var udis = []
+                var dolares = []
+                var fechas_dolares = []
+                if(data.udis==null && data.dolares==null){
+                    mensaje.innerHTML='rango de fechas erroneos'
+                }else{
+                for(i=0;i<data.udis.length;i++){
+                    var fecha = data.udis[i].fecha
+                    var udi = data.udis[i].dato
+                    fechas.push(fecha)
+                    udis.push(parseFloat(udi))
+
+                }
+                for(i=0;i<data.dolares.length;i++){
+                    var dolar = data.dolares[i].dato
+                    dolares.push(parseFloat(dolar))
+                    var fecha = data.udis[i].fecha
+                    fechas_dolares.push(fecha)
+                }
+                console.log(fechas,udis,dolares)
+
+                var prom_udis = promedio(udis)
+                var prom_dolares = promedio(dolares)
+
+            
+                var orden_udis = udis.sort()
+                var orden_dolar = dolares.sort()
+                
+                var max_udis = orden_udis[orden_udis.length-1]
+                var max_dolar = orden_dolar[orden_dolar.length-1]
+
+                var min_udis = orden_udis[0]
+                var min_dolar = orden_dolar[0]
+
+                console.log(max_udis,min_udis)
+                console.log(max_dolar,min_dolar)
+
+                
+                //tables
+                document.getElementById('list_udis').style.display='block'
+                var list_udis = $("#list_udis")
+               
+                $.each(data.udis, function(index, item) {                
+                                   
+                    list_udis.append(                    
+                        '<div class="">'                                        
+                        +   '<p class="">'+item.fecha+' -->$'+item.dato+'</p>'                                                                        
+                        +'</div>'                
+                        );            
+                });
+                
+                document.getElementById('udis_min_max_av').style.display='block'
+                var udis_min_max_av = $("#udis_min_max_av")
+                             
+                udis_min_max_av.append(                    
+                    '<div class="">'                                        
+                    +   '<p class="">Máximo: '+max_udis+'</p>'
+                    +   '<p class="">Promedio: '+prom_udis+'</p>'
+                    +   '<p class="">Mínimo: '+min_udis+'</p>'                                                                        
+                    +'</div>'                
+                );     
+                
+                document.getElementById('list_dolares').style.display='block'
+                var list_dolares = $("#list_dolares")
+               
+                $.each(data.dolares, function(index, item) {                
+                                   
+                    list_dolares.append(                    
+                        '<div class="">'                                        
+                        +   '<p class="">'+item.fecha+' -->$'+item.dato+'</p>'                                                                        
+                        +'</div>'                
+                        );            
+                });
+
+                document.getElementById('dolares_min_max_av').style.display='block'
+                var dolares_min_max_av = $("#dolares_min_max_av")
+                             
+                dolares_min_max_av.append(                    
+                    '<div class="">'                                        
+                    +   '<p class="">Máximo: '+max_dolar+'</p>'
+                    +   '<p class="">Promedio: '+prom_dolares+'</p>'
+                    +   '<p class="">Mínimo: '+min_dolar+'</p>'                                                                        
+                    +'</div>'                
+                );
+                //fin_tables
+               
+                //dolar_chart
+                Highcharts.chart('container_2', {
+                    chart: {
+                        type: 'line'
+                    },
+                    title: {
+                        text: 'Valores de dólares'
+                    },
+                    subtitle: {
+                        text: 'Fuente: Banxico'
+                    },
+                    xAxis: {
+                        categories: fechas_dolares
+                    },
+                    yAxis: {
+                        title: {
+                        text: 'Valores (MXN)'
+                        }
+                    },
+                    plotOptions: {
+                        line: {
+                        dataLabels: {
+                            enabled: true
+                        },
+                        enableMouseTracking: false
+                        }
+                    },
+                    series: [{
+                        name: 'Dólares',
+                        data: dolares
+                    }]
+                    });//fin_dolar_chart
+                    //udis_chart
+                    Highcharts.chart('container', {
+                    chart: {
+                        zoomType: 'x'
+                    },
+                    title: {
+                        text: 'Valores de UDIS'
+                    },
+                    subtitle: {
+                        text: 'Fuente: Banxico'
+                    },
+                    xAxis: {
+                        categories: fechas
+                    },
+                    yAxis: {
+                        title: {
+                        text: 'valores'
+                        }
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    plotOptions: {
+                        area: {
+                        fillColor: {
+                            linearGradient: {
+                            x1: 0,
+                            y1: 0,
+                            x2: 0,
+                            y2: 1
+                            },
+                            stops: [
+                            [0, Highcharts.getOptions().colors[0]],
+                            [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                            ]
+                        },
+                        marker: {
+                            radius: 2
+                        },
+                        lineWidth: 1,
+                        states: {
+                            hover: {
+                            lineWidth: 1
+                            }
+                        },
+                        threshold: null
+                        }
+                    },
+
+                    series: [{
+                        type: 'area',
+                        name: 'Valor UDI',
+                        data: udis
+                    },{
+                        data:prom_udis
+                    }]
+                });//fin_udis_chart
+            }
+        },
+        error: function (xhr, status, errorThrown) { 
+                
+                var status = xhr.status
+                console.log(status+', '+xhr.responseText)
+                mensaje.innerHTML=xhr.responseText
+            
+        }
+    });
+
+}
+
+    function promedio(arreglo){
+        var suma = 0
+        for (i=0;i<arreglo.length;i++){
+            suma = suma + arreglo[i]
+        }
+        var promedio = suma/arreglo.length
+        return promedio
+
+    }
+
+    
+
+   
+    
+</script>
+
+
+    
+</body>
+</html>
